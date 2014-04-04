@@ -1,0 +1,40 @@
+{% extends 'movies/base.html' %}
+{% load static %}
+
+{% block title %}{{ Movies }}{% endblock %}
+
+{% block body_block %}
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet">
+
+    <div class="hero-unit">
+        <h2 style="color: dodgerblue">Login to Movies Mari</h2>
+
+        <form class="form-horizontal" method="post" action="/movies/login/">
+              <h3 class="form-signin-heading">Please sign in</h3>
+              <div class="control-group">
+                {% csrf_token %}
+                    <label class="control-label" for="input">Username:</label>
+                    <div class="controls">
+                        <input type="text" name="username" value="" placeholder="username" size="50" />
+                    </div>
+              </div>
+              <div class="control-group">
+                {% csrf_token %}
+                    <label class="control-label" for="input">Password:</label>
+                    <div class="controls">
+                        <input type="password" name="password" value="" placeholder="password" size="50" />
+                    </div>
+              </div>
+            <div class="control-group">
+                <div class="controls">
+                    <label class="checkbox">
+                        <input type="checkbox"> Remember me
+                    </label>
+                    <input class="btn btn-primary" type="submit" value="Login" />
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+

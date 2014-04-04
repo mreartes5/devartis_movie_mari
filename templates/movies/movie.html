@@ -1,0 +1,18 @@
+{% extends 'movies/base.html' %}
+
+{% block title %}{{ movie_title }}{% endblock %}
+
+
+{% block body_block %}
+
+    {% if movie %}
+        <h2>nada</h2>
+        <h1 style="font-size: xx-large">{{ movie_title }}</h1> <h3 style="font-size: medium">({{ movie_year }})</h3>
+        <h3> Rating: {{ movie_rating }}</h3>  <h4> Votes {{ movie_votes }}</h4>
+        <a href="/movies/movie/{{ movie.id }}/add_rating/">Add rating</a>
+
+    {% else %}
+        The specified movie "{{ movie_title }}" does not exist!
+    {% endif %}
+
+{% endblock %}

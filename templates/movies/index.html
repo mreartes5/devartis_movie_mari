@@ -1,0 +1,30 @@
+{% extends 'movies/base.html' %}
+
+
+{% block title %}{{ Movies }}{% endblock %}
+
+{% block body_block %}
+
+    {% if user.is_authenticated %}
+        <h2>Movies Mari</h2>
+
+        <strong>{{ boldmessage }}</strong><br/>
+
+    {% else %}
+        <h1>Movies Mari</h1>
+
+        Welcome! <strong>{{ boldmessage }}</strong><br/>
+
+    {% endif %}
+
+    {% if movies %}
+        <ul>
+            {% for movie in movies %}
+                <li><a href="/movies/movie/{{ movie.id }}">{{ movie.title }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <strong>There are no movies present.</strong>
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'movies/base.html' %}
+{% load static %}
+
+{% block title %}{{ Movies }}{% endblock %}
+
+
+{% block body_block %}
+        <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+        <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet">
+    <div class="hero-unit">
+        <h2 style="color: dodgerblue">Register with Movies Mari</h2><br />
+
+        {% if registered %}
+            Movies Mari says: <strong>Thank you for registering!</strong>
+            <p><a href="/movies/login/">Login</a> when you are ready to rango.</p>
+        {% else %}
+            <form class="form-signin span8" id="user_form" method="post" action="/movies/register/"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+                <h3 class="form-signin-heading">Sign up Here</h3>
+
+                {% for field in user_form.visible_fields %}
+                    {{ field.errors }}
+                    {{ field.help_text }}<br />
+                    {{ field }}<br />
+                {% endfor %}
+
+                {% for field in profile_form.visible_fields %}
+                    {{ field.errors }}
+                    {{ field.help_text }}<br />
+                    {{ field }}<br />
+                {% endfor %}
+
+                <br />
+                <!-- Provide a button to click to submit the form. -->
+                <input class="btn btn-primary" type="submit" name="submit" value="Register"/>
+
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}
+
