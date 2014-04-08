@@ -1,8 +1,7 @@
 from django import forms
-from django.contrib.auth.models import User
 
-from movies.models import UserProfile
-from movies.models import Rating
+from movies.models import UserProfile, MyUser
+from movies.models import Movie
 
 
 class UserForm(forms.ModelForm):
@@ -11,7 +10,7 @@ class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(), help_text="Please enter a password.")
 
     class Meta:
-        model = User
+        model = MyUser
         fields = ['username', 'email', 'password']
 
 
@@ -25,9 +24,13 @@ class UserProfileForm(forms.ModelForm):
 
 
 class RatingForm(forms.ModelForm):
-    # value = forms.CharField(max_length=2, help_text="Please enter the points.")
-    value = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
+    value = forms.IntegerField(help_text="Please enter a number between 1 to 10.")
 
     class Meta:
-        model = Rating
+        model = Movie
         fields = ['value']
+
+
+class UserWatchlistForm(forms.ModelForm):
+    class Meta:
+        model = MyUser

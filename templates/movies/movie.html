@@ -1,18 +1,50 @@
 {% extends 'movies/base.html' %}
+{% load static %}
 
-{% block title %}{{ movie_title }}{% endblock %}
+
+{% block title %}{{ Movie }}{% endblock %}
 
 
 {% block body_block %}
+        <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+        <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet">
 
-    {% if movie %}
         <h2>nada</h2>
-        <h1 style="font-size: xx-large">{{ movie_title }}</h1> <h3 style="font-size: medium">({{ movie_year }})</h3>
-        <h3> Rating: {{ movie_rating }}</h3>  <h4> Votes {{ movie_votes }}</h4>
-        <a href="/movies/movie/{{ movie.id }}/add_rating/">Add rating</a>
+        <h2>{{ movie.title }} ({{ movie.year }})</h2>
+        <h4> Rating: {{ movie.rating }} / Votes: {{ movie.total_votes }}</h4>
+        {% if user.is_authenticated %}
 
-    {% else %}
-        The specified movie "{{ movie_title }}" does not exist!
-    {% endif %}
+            <form class="form-horizontal" method="post" action="{% url "movies:add_rating_to_movie" movie.id%}">
+                <div class="control-group">
+                {% csrf_token %}
+                    <label class="control-label" for="input">Rating:</label>
+                    <div class="controls">
+                        <input type="text" name="rating" value="" placeholder="Enter a number 1 to 10" size="50" />
+                        <input class="btn btn-small btn-info" type="submit" name="rank" value="Rank"/>
+                    </div>
+                </div>
+            </form>
+
+            <form class="form-horizontal" method="post" action="{% url "movies:add_movie_to_list" movie.id %}">
+                {% csrf_token %}
+                {% for hidden in watchlist.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
+
+                {% for field in watchlist.visible_fields %}
+                    {{ field.errors }}
+                    {{ field.help_text }}
+                    {{ field }}
+                {% endfor %}
+                <div class="control-group">
+                    {% csrf_token %}
+                    <label class="control-label" for="input">Add to list:</label>
+                    <div class="controls">
+                        <input class="btn btn-small btn-info" type="submit" name="toList" value="AddToList"/>
+                    </div>
+                </div>
+            </form>
+        {% endif %}
+        <a href="/movies/">All movies</a>
 
 {% endblock %}

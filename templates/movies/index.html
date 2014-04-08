@@ -20,7 +20,7 @@
     {% if movies %}
         <ul>
             {% for movie in movies %}
-                <li><a href="/movies/movie/{{ movie.id }}">{{ movie.title }}</a></li>
+                <li><a href="/movies/movie/{{ movie.id }}">{{ movie.title }}  ({{ movie.year }})</a></li>
             {% endfor %}
         </ul>
     {% else %}

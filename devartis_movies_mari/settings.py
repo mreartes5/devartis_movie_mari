@@ -10,6 +10,8 @@ TEMPLATE_PATH = os.path.join(PROJECT_PATH, 'templates')
 
 DATABASE_PATH = os.path.join(PROJECT_PATH, 'movies.db')
 
+AUTH_USER_MODEL = 'movies.MyUser'
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 

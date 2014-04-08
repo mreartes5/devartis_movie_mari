@@ -4,10 +4,13 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.db import models
+from django.contrib.auth.models import User
 
 from movies.forms import UserForm, UserProfileForm
-from movies.forms import RatingForm
-from movies.models import Movie
+from movies.forms import RatingForm, UserWatchlistForm
+from movies.models import Movie, UserProfile, MyUser
+from django.db.models import Avg
 
 
 def index(request):
@@ -16,9 +19,9 @@ def index(request):
     movies_list = Movie.objects.order_by('title')
     context_dict = {'boldmessage': "Here are the best movies", 'movies': movies_list}
 
-    for movie in movies_list:
-        movie.url = movie.id
-        #movie.url = movie.title.replace(' ', '_')
+    # for movie in movies_list:
+    #     movie.url = movie.id
+    #     #movie.url = movie.title.replace(' ', '_')
 
     return render_to_response('movies/index.html', context_dict, context)
     #return HttpResponse("Movies Mari")
@@ -146,33 +149,49 @@ def user_logout(request):
     # Take the user back to the homepage.
     return HttpResponseRedirect('/movies/')
 
+@login_required
+def user_watchlist(request, user_id):
+    context = RequestContext(request)
 
-def movie(request, movie_id):
+    context_dict = {'user_id': user_id}
+
+    try:
+        user = UserProfile.objects.get(id=user_id)
+        context_dict['user'] = user
+
+        watchlist = user.watchlist.order_by('title')
+        context_dict['watchlist'] = watchlist
+
+    except UserProfile.DoesNotExist:
+        pass
+
+    return render_to_response('movies/watchlist.html', context_dict, context)
+
+
+def add_rating_to_movie(request, movie_id):
     context = RequestContext(request)
     #movie_title = movie_title_url.replace('_', ' ')
 
     #context_dict = {'movie_title': movie_title}
+    context_dict = {'movie_id': movie_id}
 
     try:
-        context_dict = {'movie_id': movie_id}
+        current_movie = Movie.objects.get(id=movie_id)
 
-        movie = Movie.objects.get(id=movie_id)
+        context_dict['movie'] = current_movie
 
-        context_dict['movie'] = movie
+        if request.method == 'POST':
+            new_value = request.POST['rating']
+            context_dict['rating'] = new_value
 
-        #rating = Rating.objects.filter(movie=movie)         #####???
-        #context_dict['rating'] = rating                     #####???
+            current_movie.average_rating(new_value)
+            current_movie.new_vote()
+            current_movie.save()
 
-        movie_title = movie.title
-        movie_year = movie.year
-        movie_rank = movie.imdb_rank
-        movie_votes = movie.imdb_votes
-        movie_rating = movie.average_rating()
-        context_dict['movie_title'] = movie_title
-        context_dict['movie_year'] = movie_year
-        context_dict['movie_rank'] = movie_rank
-        context_dict['movie_votes'] = movie_votes
-        context_dict['movie_rating'] = movie_rating
+        else:  # If the request was not a POST, display the form to enter details.
+            rating_form = RatingForm()
+
+            context_dict['rating'] = rating_form
 
     except Movie.DoesNotExist:
         pass
@@ -180,37 +199,36 @@ def movie(request, movie_id):
     return render_to_response('movies/movie.html', context_dict, context)
 
 
-def add_rating(request, movie_id_url):
+def add_movie_to_watchlist(request, movie_id):
     context = RequestContext(request)
+    #movie_title = movie_title_url.replace('_', ' ')
 
-    rating_movie = Movie.objects.get(id=movie_id_url)
+    #context_dict = {'movie_title': movie_title}
+    context_dict = {'movie_id': movie_id}
 
-    movie_title = rating_movie.title
+    try:
+        current_movie = Movie.objects.get(id=movie_id)
 
-    if request.method == 'POST':
-        form = RatingForm(request.POST)
+        context_dict['movie'] = current_movie
 
-        if form.is_valid():
-            rating = form.save(commit=False)
+        if request.method == 'POST':
+            add_movie = UserWatchlistForm(data=request.POST)
 
-            try:
-                rating.movie = rating_movie
+            current_user = request.user
+            context_dict['user'] = current_user
 
-            except Movie.DoesNotExist:
-                return render_to_response('movies/movie.html', {}, context)
+            current_user_watchlist = current_user.watchlist
+            print current_user_watchlist
+            context_dict['watchlist'] = current_user_watchlist
+            current_user_watchlist.add(add_movie)
 
-            rating.save()
+            # return HttpResponseRedirect('/movies/')
+        else:  # If the request was not a POST, display the form to enter details.
+            watchlist_form = UserWatchlistForm()
 
-            return movie(request, movie_id_url)
+            context_dict['watchlist'] = watchlist_form
 
-        else:
-            # The supplied form contained errors - just print them to the terminal.
-            print form.errors
-    else:
-        # If the request was not a POST, display the form to enter details.
-        form = RatingForm()
+    except Movie.DoesNotExist:
+        pass
 
-    return render_to_response('movies/add_rating.html',
-                              {'movie_id_url': movie_id_url, 'movie_title': movie_title, 'form': form}, context)
-
-
+    return render_to_response('movies/watchlist.html', context_dict, context)

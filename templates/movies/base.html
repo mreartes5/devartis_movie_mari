@@ -30,6 +30,7 @@
                                {% if user.is_authenticated %}
                                 <li class="navbar-text">Welcome, {{ user.username }}!</li>
                                 <li><a href="/movies/logout/">Logout</a></li>
+                                <li><a href="/movies/{{ user.id }}/mywatchlist"> My watchlist</a></li>
                                {% else %}
                                 <li><a href="/movies/register/">Register</a></li>
                                 <li><a href="/movies/login/">Login</a></li>
