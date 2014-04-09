@@ -4,27 +4,27 @@
 {% block title %}{{ Movies }}{% endblock %}
 
 {% block body_block %}
+    <div style="margin-top:50px;margin-left:20px">
+        {% if user.is_authenticated %}
+            <strong>{{ boldmessage }}</strong><br/>
 
-    {% if user.is_authenticated %}
-        <h2>Movies Mari</h2>
+        {% else %}
+            <h1>Movies Mari</h1>
 
-        <strong>{{ boldmessage }}</strong><br/>
+            Welcome! <strong>{{ boldmessage }}</strong><br/>
 
-    {% else %}
-        <h1>Movies Mari</h1>
+        {% endif %}
 
-        Welcome! <strong>{{ boldmessage }}</strong><br/>
+        <li><a href="/movies/searchMovies">Search movies</a></li>
 
-    {% endif %}
-
-    {% if movies %}
-        <ul>
-            {% for movie in movies %}
-                <li><a href="/movies/movie/{{ movie.id }}">{{ movie.title }}  ({{ movie.year }})</a></li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <strong>There are no movies present.</strong>
-    {% endif %}
-
+        {% if movies %}
+            <ul>
+                {% for movie in movies %}
+                    <li><a href="/movies/movie/{{ movie.id }}">{{ movie.title }}  ({{ movie.year }})</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>There are no movies present.</strong>
+        {% endif %}
+    </div>
 {% endblock %}

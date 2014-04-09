@@ -31,6 +31,11 @@ class RatingForm(forms.ModelForm):
         fields = ['value']
 
 
-class UserWatchlistForm(forms.ModelForm):
+class SearchForm(forms.ModelForm):
+    title = forms.CharField(help_text="Enter the movie's title")
+    year_from = forms.CharField(help_text="Enter year from")
+    year_to = forms.CharField(help_text="Enter year to")
+
     class Meta:
-        model = MyUser
+        model = Movie
+        fields = ['title', 'year_from', 'year_to']

@@ -1,0 +1,34 @@
+{% extends 'movies/base.html' %}
+
+
+{% block title %}{{ Movies }}{% endblock %}
+
+{% block body_block %}
+
+	    <div style="margin-top:50px;margin-left:20px">
+            <form id="search_form" method="post" action="{% url "movies:search_movies" %}">
+                {% csrf_token %}
+                {% for hidden in search_form.hidden_fields %}
+                    <div class="control-group">
+                        {{ hidden }}
+                    </div>
+                {% endfor %}
+
+                {% for field in search_form.visible_fields %}
+                    <div class="control-group">
+                        {{ field.errors }}
+                        {{ field.help_text}}
+                        {{ field }}
+                    </div>
+                {% endfor %}
+                <input class="btn btn-primary" type="submit" name="submit" value="Search" />
+            </form>
+
+            {% for movie in matched_movies %}
+                <li><a href="/movies/movie/{{ movie.id }}">{{ movie.title }}  ({{ movie.year }})</a></li>
+            {% endfor %}
+
+            <a href="/movies/">All movies</a>
+        </div>
+
+{% endblock %}
