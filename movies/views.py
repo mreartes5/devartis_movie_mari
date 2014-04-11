@@ -191,7 +191,7 @@ def tags_movie_show(request, movie_id):
     try:
         current_movie = Movie.objects.get(id=movie_id)
 
-        current_movie_tags = Tag.objects.all().order_by('name')
+        current_movie_tags = current_movie.tag_set.all().order_by('name')
         context_dict['tags'] = current_movie_tags
 
     except Movie.DoesNotExist:
@@ -254,15 +254,16 @@ def search_movies(request):
     return render_to_response('movies/searchMovies.html', context_dict, context)
 
 @require_POST
-def tag_movie(request, movie_id):
+def add_tag_to_movie(request, movie_id):
 
     current_movie = get_object_or_404(Movie, pk=movie_id)
 
-    current_tag = request.POST['hola']
-    print current_tag
-    new_tag = Tag(name=current_tag)
-    new_tag.movies.add(current_movie)
+    current_tag_name = request.POST['name']
+
+    new_tag = Tag(name=current_tag_name)
     new_tag.save()
+    current_movie.tag_set.add(new_tag)
+    #new_tag.movies.add(current_movie)
 
     return redirect('movies:movie_show', movie_id=movie_id)
 
