@@ -16,12 +16,15 @@ create virtualenv
 activate python on virtualenv
     pyenv local 2.7.6
 
-intall django on virtualenv
+install django on virtualenv
     pip install django
 
 initialize database
     python manage.py syncdb
 
-
+import movies with a django command
+    processing the ratings.list file to get movies details (the file is obtained from http://www.imdb.com/interfaces)
+    create a django command to import the movies details and save it in database
+    run the command created: python manage.py "command"
 
 

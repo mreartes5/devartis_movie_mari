@@ -4,7 +4,6 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from django.views.decorators.http import require_http_methods
 from django.views.decorators.http import require_POST
 
 from movies.forms import UserForm, UserProfileForm, SearchForm
@@ -152,11 +151,13 @@ def user_logout(request):
 def movie_show(request, movie_id):
     context = RequestContext(request)
 
-    context_dict = {'movie_id': movie_id}
+    context_dict = {'movie_id': movie_id, 'tags': Tag.objects.order_by('name')}
+
     try:
         current_movie = Movie.objects.get(id=movie_id)
 
         context_dict['movie'] = current_movie
+        context_dict['rating_form'] = RatingForm()
 
     except Movie.DoesNotExist:
         pass
@@ -189,29 +190,88 @@ def tags_movie_show(request, movie_id):
     context_dict = {'movie_id': movie_id}
 
     try:
-        current_movie = Movie.objects.get(id=movie_id)
+        current_movie = get_object_or_404(Movie, pk=movie_id)
+        context_dict['movie'] = current_movie
 
-        current_movie_tags = current_movie.tag_set.all().order_by('name')
+        current_movie_tags = current_movie.tags.all().order_by('name')
         context_dict['tags'] = current_movie_tags
 
     except Movie.DoesNotExist:
         pass
 
-    return render_to_response('movies/movieTags.html', context_dict, context)        
+    return render_to_response('movies/movieTags.html', context_dict, context)
 
+
+# @require_POST
+# def add_rating_to_movie(request, movie_id):
+#     current_movie = get_object_or_404(Movie, pk=movie_id)
+#
+#     new_value = request.POST['rating']
+#
+#     current_movie.average_rating(new_value)
+#     current_movie.new_vote()
+#     current_movie.save()
+#
+#     return redirect('movies:movie_show', movie_id=movie_id)
 
 @require_POST
 def add_rating_to_movie(request, movie_id):
+    context = RequestContext(request)
 
+    rating_form = RatingForm(data=request.POST)
+    current_movie = get_object_or_404(Movie, pk=movie_id)
+    context_dict = {'movie': current_movie}
+
+    if rating_form.is_valid():
+        new_value = rating_form.cleaned_data['value']
+        current_movie.average_rating(new_value)
+        current_movie.new_vote()
+        current_movie.save()
+        context_dict['rating_form'] = RatingForm()
+    else:
+        context_dict['rating_form'] = rating_form
+
+    return render_to_response('movies/movie.html', context_dict, context)
+
+
+def get_or_create_tag(tag_name):
+
+    if len(Tag.objects.filter(name=tag_name)) != 0:
+        tag = Tag.objects.get(name=tag_name)
+
+    else:
+        tag = Tag(name=tag_name)
+        tag.save()
+
+    return tag
+
+
+@require_POST
+def add_tag_to_movie(request, movie_id):
     current_movie = get_object_or_404(Movie, pk=movie_id)
 
-    new_value = request.POST['rating']
+    current_tag_name = request.POST['name']
+    tags_name = current_tag_name.split(',')
 
-    current_movie.average_rating(new_value)
-    current_movie.new_vote()
-    current_movie.save()
+    for tag_name in tags_name:
+        current_tag = get_or_create_tag(tag_name)
+        current_movie.tags.add(current_tag)
 
     return redirect('movies:movie_show', movie_id=movie_id)
+
+
+
+
+@require_POST
+def remove_tag_from_movie(request, movie_id, tag_id):
+    current_movie = get_object_or_404(Movie, pk=movie_id)
+
+    current_tag = get_object_or_404(Tag, pk=tag_id)
+
+    current_movie_tags = current_movie.tags
+    current_movie_tags.remove(current_tag)
+
+    return redirect('movies:tags_movie_show', movie_id=movie_id)
 
 
 @require_POST
@@ -239,8 +299,9 @@ def search_movies(request):
 
         if search_form.is_valid():
 
-            matched_movies = Movie.objects.filter(title__icontains=search_title, year__gte=search_year_from, year__lte=search_year_to)
-            
+            matched_movies = Movie.objects.filter(title__icontains=search_title, year__gte=search_year_from,
+                                                  year__lte=search_year_to)
+
             context_dict['matched_movies'] = matched_movies
 
         else:
@@ -253,23 +314,9 @@ def search_movies(request):
 
     return render_to_response('movies/searchMovies.html', context_dict, context)
 
-@require_POST
-def add_tag_to_movie(request, movie_id):
-
-    current_movie = get_object_or_404(Movie, pk=movie_id)
-
-    current_tag_name = request.POST['name']
-
-    new_tag = Tag(name=current_tag_name)
-    new_tag.save()
-    current_movie.tag_set.add(new_tag)
-    #new_tag.movies.add(current_movie)
-
-    return redirect('movies:movie_show', movie_id=movie_id)
-
 
 """
-def tag_movie(request, movie_id):
+def add_tag_to_movie(request, movie_id):
     context = RequestContext(request)
     context_dict = {}
 
@@ -299,33 +346,3 @@ def tag_movie(request, movie_id):
     return render_to_response('movies/movie.html', context_dict, context)
 """
 
-
-
-"""
-def add_rating_to_movie(request, movie_id):
-    context = RequestContext(request)
-
-    current_movie = get_object_or_404(Movie, pk=movie_id)
-    context_dict = {'movie_id': movie_id}
-
-    if request.method == 'POST':
-        rating_form = RatingForm(data=request.POST)    
-        context_dict['rating_form'] = rating_form  
-
-        print rating_form
-
-        new_value = request.POST['rating']
-        if rating_form.is_valid():
-            current_movie.average_rating(new_value)
-            current_movie.new_vote()
-            current_movie.save()
-
-        else:
-            print rating_form.errors
-    
-    else:
-        rating_form = RatingForm()
-        context_dict['rating_form'] = rating_form  
-
-    return render_to_response('movies/movie.html', context_dict, context)
-"""

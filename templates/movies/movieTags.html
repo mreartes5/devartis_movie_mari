@@ -10,8 +10,16 @@
         <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet">
         <div style="margin-top:50px;margin-left:20px">
 
+            <h4><a href="/movies/movie/{{ movie_id }}">{{ movie.title }}  ({{ movie.year }})</a> Tags</h4>
             {% for tag in tags %}
-                <h4> {{ tag.name }} </h4>
+                <form class="form-horizontal" method="post" action="{% url "movies:remove_tag_from_movie" movie.id tag.id %}">
+                    {% csrf_token %}
+                    <label class="control-label" for="input">{{ tag.name }}</label>
+                    <div class="controls">
+                        <input class="btn btn-small btn-link" type="submit" value="x"/>
+                        <input class="btn btn-small btn-info" type="hidden" name="tag" value="{{ tag.id }}"/>
+                    </div>
+                </form>
             {% endfor %}
 
             <a href="/movies/">All movies</a>

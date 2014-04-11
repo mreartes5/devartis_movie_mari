@@ -23,12 +23,8 @@ class UserProfileForm(forms.ModelForm):
         fields = ['website', 'picture']
 
 
-class RatingForm(forms.ModelForm):
-    value = forms.IntegerField(help_text="Please enter a number between 1 to 10.")
-
-    class Meta:
-        model = Movie
-        fields = ['value']
+class RatingForm(forms.Form):
+    value = forms.IntegerField(min_value=1, max_value=10, help_text="Please enter a number between 1 to 10.")
 
 
 class SearchForm(forms.ModelForm):

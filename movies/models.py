@@ -7,6 +7,12 @@ from django.contrib.auth.models import AbstractUser
 
 
 # Create your models here.
+class Tag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
 
 class Movie(models.Model):
     title = models.CharField(max_length=100, unique=True)
@@ -15,6 +21,7 @@ class Movie(models.Model):
     imdb_votes = models.IntegerField(default=0)
     rating = models.FloatField(default=0)
     total_votes = models.IntegerField(default=0)
+    tags = models.ManyToManyField(Tag)
 
     def average_rating(self, value):
         self.rating = (self.rating + float(value)) / 2
@@ -55,11 +62,3 @@ class UserProfile(models.Model):
     # Override the __unicode__() method to return out something meaningful!
     def __unicode__(self):
         return self.user.usernamdele
-
-class Tag(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    movies = models.ManyToManyField(Movie)
-
-    def __unicode__(self):
-        return self.name
-        
