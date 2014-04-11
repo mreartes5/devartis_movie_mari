@@ -54,6 +54,12 @@ class UserProfile(models.Model):
 
     # Override the __unicode__() method to return out something meaningful!
     def __unicode__(self):
-        return self.user.username
+        return self.user.usernamdele
 
+class Tag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    movies = models.ManyToManyField(Movie)
 
+    def __unicode__(self):
+        return self.name
+        

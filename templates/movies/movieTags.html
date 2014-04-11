@@ -1,0 +1,21 @@
+{% extends 'movies/base.html' %}
+{% load static %}
+
+
+{% block title %}{{ watchlist }}{% endblock %}
+
+
+{% block body_block %}
+        <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+        <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet">
+        <div style="margin-top:50px;margin-left:20px">
+
+            {% for tag in tags %}
+                <h4> {{ tag.name }} </h4>
+            {% endfor %}
+
+            <a href="/movies/">All movies</a>
+
+        </div>
+
+{% endblock %}

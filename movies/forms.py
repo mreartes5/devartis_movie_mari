@@ -1,7 +1,7 @@
 from django import forms
 
 from movies.models import UserProfile, MyUser
-from movies.models import Movie
+from movies.models import Movie, Tag
 
 
 class UserForm(forms.ModelForm):
@@ -33,9 +33,17 @@ class RatingForm(forms.ModelForm):
 
 class SearchForm(forms.ModelForm):
     title = forms.CharField(help_text="Enter the movie's title")
-    year_from = forms.CharField(help_text="Enter year from")
-    year_to = forms.CharField(help_text="Enter year to")
+    year_from = forms.IntegerField(help_text="Enter year from")
+    year_to = forms.IntegerField(help_text="Enter year to")
 
     class Meta:
         model = Movie
         fields = ['title', 'year_from', 'year_to']
+
+
+class TagForm(forms.ModelForm):
+    name = forms.CharField(help_text="Enter a tag for this movie")
+
+    class Meta:
+        model = Tag
+        fields = ['name']

@@ -16,4 +16,6 @@ urlpatterns = patterns('',
                        url(r'^movie/(?P<movie_id>\d+)/addtolist/$', views.add_movie_to_watchlist,
                            name='add_movie_to_list'),
                        url(r'^searchMovies/$', views.search_movies, name='search_movies'),
+                       url(r'^movie/(?P<movie_id>\d+)/addTag/$', views.tag_movie, name='tag_movie'),
+                       url(r'^movie/(?P<movie_id>\d+)/tags/$', views.tags_movie_show, name='tags_movie_show'),                      
 )
