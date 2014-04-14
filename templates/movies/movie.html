@@ -31,30 +31,12 @@
                 </div>
             </form>
 
-
-            <form id="tag_form" method="post" action="{% url "movies:add_tag_to_movie" movie.id %}">
+            <form class="form-horizontal" method="post" action="{% url "movies:add_tag_to_movie" movie.id %}">
                 {% csrf_token %}
-                {% for hidden in tag_form.hidden_fields %}
-                    <div class="control-group">
-                        {{ hidden }}
-                    </div>
-                {% endfor %}
-
-                {% for field in tag_form.visible_fields %}
-                    <div class="control-group">
-                        {{ field.errors }}
-                        {{ field.help_text }}
-                        {{ field }}
-                    </div>
-                {% endfor %}
-
-                <label class="control-label" for="input">Tag:</label>
-
-                <div class="controls">
-                    <input type="text" name="name" value="" placeholder="Enter a tag for this movie" size="50"/>
-                    <input class="btn btn-small btn-info" type="submit" name="tag" value="AddTag"/>
-                </div>
+                {{ tag_form.as_p }}
+                <input class="btn btn-small btn-info" type="submit" name="submit" value="AddTag"/>
             </form>
+
 
             <div class="control-group">
                 <a href="/movies/movie/{{ movie.id }}/tags">Tags</a>

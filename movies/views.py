@@ -159,6 +159,8 @@ def movie_show(request, movie_id):
         context_dict['movie'] = current_movie
         context_dict['rating_form'] = RatingForm()
 
+        context_dict['tag_form'] = TagForm()
+
     except Movie.DoesNotExist:
         pass
 
@@ -228,6 +230,7 @@ def add_rating_to_movie(request, movie_id):
         current_movie.new_vote()
         current_movie.save()
         context_dict['rating_form'] = RatingForm()
+        context_dict['tag_form'] = TagForm()
     else:
         context_dict['rating_form'] = rating_form
 
@@ -245,19 +248,41 @@ def get_or_create_tag(tag_name):
 
     return tag
 
-
 @require_POST
 def add_tag_to_movie(request, movie_id):
+    context = RequestContext(request)
+
+    tag_form = TagForm(data=request.POST)
     current_movie = get_object_or_404(Movie, pk=movie_id)
+    context_dict = {'movie': current_movie}
 
-    current_tag_name = request.POST['name']
-    tags_name = current_tag_name.split(',')
+    if tag_form.is_valid():
+        current_tag_name = tag_form.cleaned_data['name']
 
-    for tag_name in tags_name:
-        current_tag = get_or_create_tag(tag_name)
-        current_movie.tags.add(current_tag)
+        tags_name = current_tag_name.split(',')
 
-    return redirect('movies:movie_show', movie_id=movie_id)
+        for tag_name in tags_name:
+            current_tag = get_or_create_tag(tag_name)
+            current_movie.tags.add(current_tag)
+            context_dict['tag_form'] = TagForm()
+            context_dict['rating_form'] = RatingForm()
+    else:
+        context_dict['tag_form'] = tag_form
+
+    return render_to_response('movies/movie.html', context_dict, context)
+
+#@require_POST
+#def add_tag_to_movie(request, movie_id):
+ #   current_movie = get_object_or_404(Movie, pk=movie_id)
+
+  #  current_tag_name = request.POST['name']
+   # tags_name = current_tag_name.split(',')
+
+    #for tag_name in tags_name:
+     #   current_tag = get_or_create_tag(tag_name)
+      #  current_movie.tags.add(current_tag)
+
+    #return redirect('movies:movie_show', movie_id=movie_id)
 
 
 
