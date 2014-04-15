@@ -3,8 +3,6 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# from django.db.models import Avg
-
 
 # Create your models here.
 class Tag(models.Model):
@@ -26,12 +24,6 @@ class Movie(models.Model):
     def average_rating(self, value):
         self.rating = (self.rating + float(value)) / 2
 
-    # def average_rating(self):
-    #     #calcular rating en funcion de instancias de Rating asociados
-    #     rating = Rating.objects.filter(movie=self).aggregate(Avg('value'))
-    #
-    #     return rating
-
     def new_vote(self):
         self.total_votes += 1
 
@@ -43,14 +35,12 @@ class Movie(models.Model):
             votes=self.imdb_votes)
 
 
-# class Watchlist(models.Model):
-#     movies = models.ForeignKey(Movie)
-#
-#     def __unicode__(self):
-#         return self.movies
-
 class MyUser(AbstractUser):
     watchlist = models.ManyToManyField(Movie)
+
+
+class Rating(models.Model):
+    user = models.ForeignKey(MyUser)
 
 
 class UserProfile(models.Model):
@@ -59,6 +49,5 @@ class UserProfile(models.Model):
     website = models.URLField(blank=True)
     picture = models.ImageField(upload_to='profile_images', blank=True)
 
-    # Override the __unicode__() method to return out something meaningful!
     def __unicode__(self):
         return self.user.usernamdele

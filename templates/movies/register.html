@@ -12,9 +12,9 @@
 
         {% if registered %}
             Movies Mari says: <strong>Thank you for registering!</strong>
-            <p><a href="/movies/login/">Login</a> when you are ready to Movies Mari.</p>
+            <p><a href="{% url "movies:login" %}">Login</a> when you are ready to Movies Mari.</p>
         {% else %}
-            <form class="form-signin span8" id="user_form" method="post" action="/movies/register/"
+            <form class="form-signin span8" id="user_form" method="post" action="{% url "movies:register" %}"
                   enctype="multipart/form-data">
                 {% csrf_token %}
                 <h3 class="form-signin-heading">Sign up Here</h3>

@@ -5,25 +5,24 @@
 
 {% block body_block %}
     <div style="margin-top:50px;margin-left:20px">
-        {% if user.is_authenticated %}
-            <strong>{{ boldmessage }}</strong><br/>
 
-        {% else %}
+        <h2 style="color: cadetblue"> Search the best movies</h2>
 
-            Welcome! <strong>{{ boldmessage }}</strong><br/>
+        <form class="form-inline" method="post" action="{% url "movies:search_movies" %}">
+            {% csrf_token %}
+            {% for field in search_form.visible_fields %}
+                <div class="control-group">
+                    {{ field.errors }}
+                    {{ field.help_text }}
+                    {{ field }} <br />
+                </div>
+            {% endfor %}
+            <input class="btn btn-primary" type="submit" name="submit" value="Search" />
+        </form>
 
-        {% endif %}
+        {% for movie in matched_movies %}
+            <li><a href="{% url "movies:movie_show" movie.id %}">{{ movie.title }}  ({{ movie.year }})</a></li>
+        {% endfor %}
 
-        <ul><a href="/movies/searchMovies">Search movies</a></ul>
-
-        {% if movies %}
-            <ul>
-                {% for movie in movies %}
-                    <li><a href="/movies/movie/{{ movie.id }}">{{ movie.title }}  ({{ movie.year }})</a></li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <strong>There are no movies present.</strong>
-        {% endif %}
     </div>
 {% endblock %}

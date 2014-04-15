@@ -63,7 +63,7 @@ class Command(BaseCommand):
                     self.create_or_update_movie_from_line(current_movie_description_string_line)
 
         except IOError:
-            CommandError('Error procesing ratings file.')
+            CommandError('Error processing ratings file.')
 
         finally:
             self.stdout.write('Closing ratings file...')

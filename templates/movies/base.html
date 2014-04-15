@@ -23,24 +23,18 @@
                        <span class="icon-bar"></span>
                        <span class="icon-bar"></span>
                    </button>
-                   <a class="brand" href="/movies/">Movies Mari</a>
+                   <a class="brand" href="{% url "movies:index" %}">Movies Mari</a>
 
                     <div class="nav-collapse collapse">
                            <ul class="nav pull-right">
                                {% if user.is_authenticated %}
                                 <li class="navbar-text">Welcome, {{ user.username }}!</li>
-                                <li><a href="/movies/logout/">Logout</a></li>
-                                <li><a href="/movies/{{ user.id }}/mywatchlist"> My watchlist</a></li>
+                                <li><a href="{% url "movies:logout" %}">Logout</a></li>
+                                <li><a href="{% url "movies:user_watchlist" %}"> My watchlist</a></li>
                                {% else %}
-                                <li><a href="/movies/register/">Register</a></li>
-                                <li><a href="/movies/login/">Login</a></li>
+                                <li><a href="{% url "movies:register" %}">Register</a></li>
+                                <li><a href="{% url "movies:login" %}">Login</a></li>
                                {% endif %}
-                           </ul>
-                           <ul>
-                               {% if user.is_authenticated %}
-                                <li><a href="/movies/restricted/">Restricted</a></li>
-                               {% endif %}
-
                            </ul>
                     </div>
                </div>

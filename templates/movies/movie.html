@@ -10,39 +10,56 @@
     <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet">
 
     <div style="margin-top:50px;margin-left:20px">
-        <h2>{{ movie.title }} ({{ movie.year }})</h2>
-        <h4> Rating: {{ movie.rating }} / Votes: {{ movie.total_votes }}</h4>
-        {% if user.is_authenticated %}
-            <form class="form-horizontal" method="post" action="{% url "movies:add_rating_to_movie" movie.id %}">
-                {% csrf_token %}
-                {{ rating_form.as_p }}
-                <input class="btn btn-small btn-info" type="submit" name="submit" value="Rank"/>
-            </form>
 
-            <form class="form-horizontal" method="post" action="{% url "movies:add_movie_to_list" movie.id %}">
-                {% csrf_token %}
-                <div class="control-group">
+        {% if not movie in movies %}
+            <strong>{{ error }}</strong></br>
+        {% else %}
+            <h2>{{ movie.title }} ({{ movie.year }})</h2>
+            <h4> Rating: {{ movie.rating }} / Votes: {{ movie.total_votes }}</h4>
+            {% if user.is_authenticated %}
+
+                <form class="form-inline" method="post" action="{% url "movies:add_rating_to_movie" movie.id %}">
                     {% csrf_token %}
-                    <label class="control-label" for="input">Add to list:</label>
+                    {% for field in rating_form.visible_fields %}
+                        {{ field.errors }}
+                        {{ field.help_text }}<br />
+                        {{ field }}
+                    {% endfor %}
+                    <input class="btn btn-small btn-info" type="submit" name="submit" value="Rank"/>
+                </form>
 
-                    <div class="controls">
-                        <input class="btn btn-small btn-info" type="submit" name="toList" value="AddToList"/>
-                    </div>
+
+                {% if movie in user_watchlist %}
+                    <form class="form-inline" method="post" action="{% url "movies:remove_movie_from_movie" movie.id %}">
+                        {% csrf_token %}
+                        <label class="control-label" for="input">Remove from list:</label>
+                        <input class="btn btn-small btn-info" type="submit" value="Remove"/>
+                    </form>
+                {% else %}
+                    <form class="form-inline" method="post" action="{% url "movies:add_movie_to_list" movie.id %}">
+                        {% csrf_token %}
+                        <label class="control-label" for="input">Add to list:</label>
+                        <input class="btn btn-small btn-info" type="submit" value="Add"/>
+                    </form>
+                 {% endif %}
+
+                <form class="form-horizontal" method="post" action="{% url "movies:add_tag_to_movie" movie.id %}">
+                    {% csrf_token %}
+                    {% for field in tag_form.visible_fields %}
+                            {{ field.errors }}
+                            {{ field.help_text }}<br />
+                            {{ field }}
+                    {% endfor %}
+                    <input class="btn btn-small btn-info" type="submit" name="submit" value="AddTag"/>
+                </form>
+
+
+                <div class="control-group">
+                    <a href="{% url "movies:tags_movie_show" movie.id %}">Tags</a>
                 </div>
-            </form>
-
-            <form class="form-horizontal" method="post" action="{% url "movies:add_tag_to_movie" movie.id %}">
-                {% csrf_token %}
-                {{ tag_form.as_p }}
-                <input class="btn btn-small btn-info" type="submit" name="submit" value="AddTag"/>
-            </form>
-
-
-            <div class="control-group">
-                <a href="/movies/movie/{{ movie.id }}/tags">Tags</a>
-            </div>
+            {% endif %}
         {% endif %}
-        <a href="/movies/">All movies</a>
+        <a href="{% url "movies:index" %}">Home</a>
     </div>
 
 {% endblock %}

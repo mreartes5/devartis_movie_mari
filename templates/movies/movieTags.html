@@ -10,7 +10,7 @@
         <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet">
         <div style="margin-top:50px;margin-left:20px">
 
-            <h4><a href="/movies/movie/{{ movie_id }}">{{ movie.title }}  ({{ movie.year }})</a> Tags</h4>
+            <h4><a href="{% url "movies:movie_show" movie.id %}">{{ movie.title }}  ({{ movie.year }})</a> Tags</h4>
             {% for tag in tags %}
                 <form class="form-horizontal" method="post" action="{% url "movies:remove_tag_from_movie" movie.id tag.id %}">
                     {% csrf_token %}
@@ -22,7 +22,7 @@
                 </form>
             {% endfor %}
 
-            <a href="/movies/">All movies</a>
+            <a href="{% url "movies:index" %}">Home</a>
 
         </div>
 

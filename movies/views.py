@@ -1,34 +1,25 @@
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
+
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_http_methods
 
 from movies.forms import UserForm, UserProfileForm, SearchForm
+
 from movies.forms import RatingForm, TagForm
-from movies.models import Movie, UserProfile, Tag
+from movies.models import Movie, UserProfile, Tag, MyUser
 
 
 def index(request):
-    context = RequestContext(request)
+    context_dict = {'search_form': SearchForm()}
 
-    movies_list = Movie.objects.order_by('title')
-    context_dict = {'boldmessage': "Here are the best movies", 'movies': movies_list}
-
-    # for movie in movies_list:
-    #     movie.url = movie.id
-    #     #movie.url = movie.title.replace(' ', '_')
-
-    return render_to_response('movies/index.html', context_dict, context)
-    #return HttpResponse("Movies Mari")
+    return render(request, 'movies/index.html', context_dict)
 
 
 def register(request):
-    # Like before, get the request's context.
-    context = RequestContext(request)
-
     # A boolean value for telling the template whether the registration was successful.
     # Set to False initially. Code changes value to True when registration succeeds.
     registered = False
@@ -80,16 +71,11 @@ def register(request):
         profile_form = UserProfileForm()
 
     # Render the template depending on the context.
-    return render_to_response(
-        'movies/register.html',
-        {'user_form': user_form, 'profile_form': profile_form, 'registered': registered},
-        context)
+    return render(request, 'movies/register.html',
+                  {'user_form': user_form, 'profile_form': profile_form, 'registered': registered})
 
 
 def user_login(request):
-    # Like before, obtain the context for the user's request.
-    context = RequestContext(request)
-
     # If the request is a HTTP POST, try to pull out the relevant information.
     if request.method == 'POST':
         # Gather the username and password provided by the user.
@@ -110,7 +96,7 @@ def user_login(request):
                 # If the account is valid and active, we can log the user in.
                 # We'll send the user back to the homepage.
                 login(request, user)
-                return HttpResponseRedirect('/movies/')
+                return redirect('/')
             else:
                 # An inactive account was used - no logging in!
                 return HttpResponse("Your movies account is disabled.")
@@ -124,7 +110,7 @@ def user_login(request):
     else:
         # No context variables to pass to the template system, hence the
         # blank dictionary object...
-        return render_to_response('movies/login.html', {}, context)
+        return render(request, 'movies/login.html', {})
 
 
 def some_view(request):
@@ -135,94 +121,67 @@ def some_view(request):
 
 
 @login_required
-def restricted(request):
-    return HttpResponse("Since you're logged in, you can see all movies!")
-
-
-@login_required
 def user_logout(request):
     # Since we know the user is logged in, we can now just log them out.
     logout(request)
 
     # Take the user back to the homepage.
-    return HttpResponseRedirect('/movies/')
+    return redirect('/')
 
 
 def movie_show(request, movie_id):
-    context = RequestContext(request)
-
     context_dict = {'movie_id': movie_id, 'tags': Tag.objects.order_by('name')}
 
     try:
         current_movie = Movie.objects.get(id=movie_id)
-
         context_dict['movie'] = current_movie
-        context_dict['rating_form'] = RatingForm()
 
+        context_dict['movies'] = Movie.objects.all()
+
+        current_user_watchlist = request.user.watchlist.all()
+        context_dict['user_watchlist'] = current_user_watchlist
+
+        context_dict['rating_form'] = RatingForm()
         context_dict['tag_form'] = TagForm()
 
     except Movie.DoesNotExist:
-        pass
+            context_dict['error'] = 'The movie is not found'
 
-    return render_to_response('movies/movie.html', context_dict, context)
-
-
-@login_required
-def user_watchlist(request, user_id):
-    context = RequestContext(request)
-
-    context_dict = {'user_id': user_id}
-
-    try:
-        current_user = request.user
-        context_dict['user'] = current_user
-
-        watchlist = current_user.watchlist
-        context_dict['watchlist'] = watchlist.all().order_by('title')
-
-    except UserProfile.DoesNotExist:
-        pass
-
-    return render_to_response('movies/watchlist.html', context_dict, context)
+    return render(request, 'movies/movie.html', context_dict)
 
 
 @login_required
+def user_watchlist(request):
+    context_dict = {}
+
+    current_user = request.user
+    context_dict['user'] = current_user
+
+    watchlist = current_user.watchlist
+    context_dict['watchlist'] = watchlist.order_by('title')
+
+    return render(request, 'movies/watchlist.html', context_dict)
+
+
 def tags_movie_show(request, movie_id):
-    context = RequestContext(request)
     context_dict = {'movie_id': movie_id}
 
-    try:
-        current_movie = get_object_or_404(Movie, pk=movie_id)
-        context_dict['movie'] = current_movie
+    current_movie = get_object_or_404(Movie, pk=movie_id)
+    context_dict['movie'] = current_movie
 
-        current_movie_tags = current_movie.tags.all().order_by('name')
-        context_dict['tags'] = current_movie_tags
+    context_dict['movies'] = Movie.objects.all()
 
-    except Movie.DoesNotExist:
-        pass
+    current_movie_tags = current_movie.tags.all().order_by('name')
+    context_dict['tags'] = current_movie_tags
 
-    return render_to_response('movies/movieTags.html', context_dict, context)
+    return render(request, 'movies/movieTags.html', context_dict)
 
-
-# @require_POST
-# def add_rating_to_movie(request, movie_id):
-#     current_movie = get_object_or_404(Movie, pk=movie_id)
-#
-#     new_value = request.POST['rating']
-#
-#     current_movie.average_rating(new_value)
-#     current_movie.new_vote()
-#     current_movie.save()
-#
-#     return redirect('movies:movie_show', movie_id=movie_id)
 
 @require_POST
 def add_rating_to_movie(request, movie_id):
-    context = RequestContext(request)
-
     rating_form = RatingForm(data=request.POST)
     current_movie = get_object_or_404(Movie, pk=movie_id)
-    context_dict = {'movie': current_movie}
+    context_dict = {'movie': current_movie, 'movies': Movie.objects.all()}
 
     if rating_form.is_valid():
         new_value = rating_form.cleaned_data['value']
@@ -231,15 +190,15 @@ def add_rating_to_movie(request, movie_id):
         current_movie.save()
         context_dict['rating_form'] = RatingForm()
         context_dict['tag_form'] = TagForm()
+
     else:
         context_dict['rating_form'] = rating_form
 
-    return render_to_response('movies/movie.html', context_dict, context)
+    return render(request, 'movies/movie.html', context_dict)
 
 
 def get_or_create_tag(tag_name):
-
-    if len(Tag.objects.filter(name=tag_name)) != 0:
+    if Tag.objects.filter(name=tag_name).exists():
         tag = Tag.objects.get(name=tag_name)
 
     else:
@@ -248,13 +207,12 @@ def get_or_create_tag(tag_name):
 
     return tag
 
+
 @require_POST
 def add_tag_to_movie(request, movie_id):
-    context = RequestContext(request)
-
     tag_form = TagForm(data=request.POST)
     current_movie = get_object_or_404(Movie, pk=movie_id)
-    context_dict = {'movie': current_movie}
+    context_dict = {'movie': current_movie, 'movies': Movie.objects.all()}
 
     if tag_form.is_valid():
         current_tag_name = tag_form.cleaned_data['name']
@@ -269,22 +227,7 @@ def add_tag_to_movie(request, movie_id):
     else:
         context_dict['tag_form'] = tag_form
 
-    return render_to_response('movies/movie.html', context_dict, context)
-
-#@require_POST
-#def add_tag_to_movie(request, movie_id):
- #   current_movie = get_object_or_404(Movie, pk=movie_id)
-
-  #  current_tag_name = request.POST['name']
-   # tags_name = current_tag_name.split(',')
-
-    #for tag_name in tags_name:
-     #   current_tag = get_or_create_tag(tag_name)
-      #  current_movie.tags.add(current_tag)
-
-    #return redirect('movies:movie_show', movie_id=movie_id)
-
-
+    return render(request, 'movies/movie.html', context_dict)
 
 
 @require_POST
@@ -306,68 +249,62 @@ def add_movie_to_watchlist(request, movie_id):
     movies_to_list = request.user.watchlist
     movies_to_list.add(current_movie)
 
-    return redirect('movies:user_watchlist', user_id=request.user.id)
+    return redirect('movies:movie_show', movie_id=movie_id)
 
 
-def search_movies(request):
-    context = RequestContext(request)
-
-    context_dict = {}
-
-    if request.method == 'POST':
-        search_form = SearchForm(data=request.POST)
-        context_dict['search_form'] = search_form
-
-        search_title = request.POST['title']
-        search_year_from = request.POST['year_from']
-        search_year_to = request.POST['year_to']
-
-        if search_form.is_valid():
-
-            matched_movies = Movie.objects.filter(title__icontains=search_title, year__gte=search_year_from,
-                                                  year__lte=search_year_to)
-
-            context_dict['matched_movies'] = matched_movies
-
-        else:
-            print search_form.errors
-
-    else:
-        search_form = SearchForm()
-
-        context_dict['search_form'] = search_form
-
-    return render_to_response('movies/searchMovies.html', context_dict, context)
-
-
-"""
-def add_tag_to_movie(request, movie_id):
-    context = RequestContext(request)
-    context_dict = {}
-
+@require_POST
+def remove_movie_from_watchlist_from_movie(request, movie_id):
     current_movie = get_object_or_404(Movie, pk=movie_id)
 
-    if request.method == 'POST':
-        tag_form = TagForm(data=request.POST)
-        context_dict['tag_form'] = tag_form
+    movies_to_list = request.user.watchlist
+    movies_to_list.remove(current_movie)
 
-        current_tag = request.POST.get('name', False)
+    return redirect('movies:movie_show', movie_id=movie_id)
 
-        if tag_form.is_valid():
 
-            new_tag = Tag()
-            new_tag.name = current_tag
-            new_tag.movies.add(current_movie)
-            new_tag.save()
+@require_POST
+def remove_movie_from_watchlist_from_list(request, movie_id):
+    current_movie = get_object_or_404(Movie, pk=movie_id)
 
-        else: 
-            print tag_form.errors    
+    movies_to_list = request.user.watchlist
+    movies_to_list.remove(current_movie)
+
+    return redirect('movies:user_watchlist')
+
+
+def search_filter(search_title, search_year_from, search_year_to):
+    if search_year_from is None and search_year_to is None:
+        matched_movies = Movie.objects.filter(title__icontains=search_title)
+
+    elif search_year_from is None:
+        matched_movies = Movie.objects.filter(title__icontains=search_title, year__lte=search_year_to)
+
+    elif search_year_to is None:
+        matched_movies = Movie.objects.filter(title__icontains=search_title, year__gte=search_year_from)
 
     else:
-        tag_form = TagForm()
-        context_dict['tag_form'] = tag_form
+        matched_movies = Movie.objects.filter(title__icontains=search_title, year__gte=search_year_from,
+                                              year__lte=search_year_to)
+    return matched_movies
 
-    #return redirect('movies:movie_show', movie_id=movie_id)
-    return render_to_response('movies/movie.html', context_dict, context)
-"""
 
+@require_http_methods(["GET", "POST"])
+def search_movies(request):
+    context_dict = {}
+
+    search_form = SearchForm(data=request.POST)
+
+    if search_form.is_valid():
+        search_title = search_form.cleaned_data['title']
+        search_year_from = search_form.cleaned_data['year_from']
+        search_year_to = search_form.cleaned_data['year_to']
+
+        matched_movies = search_filter(search_title, search_year_from, search_year_to)
+
+        context_dict['search_form'] = SearchForm()
+        context_dict['matched_movies'] = matched_movies
+
+    else:
+        context_dict['search_form'] = search_form
+
+    return render(request, 'movies/index.html', context_dict)
