@@ -12,6 +12,8 @@ DATABASE_PATH = os.path.join(PROJECT_PATH, 'movies.db')
 
 AUTH_USER_MODEL = 'movies.MyUser'
 
+CRISPY_TEMPLATE_PACK = 'uni_form'
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -124,6 +126,7 @@ ROOT_URLCONF = 'devartis_movies_mari.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'devartis_movies_mari.wsgi.application'
 
+
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
@@ -145,6 +148,8 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',	
     'movies',
+    'floppyforms',
+    'crispy_forms',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
@@ -177,8 +182,4 @@ LOGGING = {
         },
     }
 }
-
-LOGIN_URL = '/movies/login/'
-#AUTH_PROFILE_MODULE = 'movies.UserProfile'
-
 

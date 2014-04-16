@@ -1,33 +1,35 @@
 {% extends 'movies/base.html' %}
-{% load static %}
+{% load crispy_forms_tags %}
 
 
 {% block title %}{{ Movie }}{% endblock %}
 
 
 {% block body_block %}
-    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
-    <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet">
-
     <div style="margin-top:50px;margin-left:20px">
 
         {% if not movie in movies %}
             <strong>{{ error }}</strong></br>
         {% else %}
             <h2>{{ movie.title }} ({{ movie.year }})</h2>
-            <h4> Rating: {{ movie.rating }} / Votes: {{ movie.total_votes }}</h4>
+            <h4> Rating: {{ movie.current_rating }} / Votes: {{ movie.total_votes }}</h4>
             {% if user.is_authenticated %}
 
-                <form class="form-inline" method="post" action="{% url "movies:add_rating_to_movie" movie.id %}">
-                    {% csrf_token %}
-                    {% for field in rating_form.visible_fields %}
-                        {{ field.errors }}
-                        {{ field.help_text }}<br />
-                        {{ field }}
-                    {% endfor %}
-                    <input class="btn btn-small btn-info" type="submit" name="submit" value="Rank"/>
-                </form>
+                {% if not current_movie_voted %}
+                    <form class="form-actions" method="post" action="{% url "movies:add_or_change_rating_to_movie" movie.id %}">
+                        {% csrf_token %}
+                        {{ rating_form|crispy }}
+                        <input class="btn btn-small btn-info" type="submit" name="submit" value="Rank"/>
+                    </form>
+                {% else %}
+                     <form class="form-inline form-actions" method="post" action="{% url "movies:add_or_change_rating_to_movie" movie.id %}">
+                        {% csrf_token %}
+                        {{ rating_form|crispy }}
+                        <input class="btn btn-small btn-info" type="submit" value="Change Rank"/>
+                        <h6>Your last rating: {{ user_rating_for_movie }}</h6>
+                    </form>
 
+                {% endif %}
 
                 {% if movie in user_watchlist %}
                     <form class="form-inline" method="post" action="{% url "movies:remove_movie_from_movie" movie.id %}">
@@ -43,13 +45,9 @@
                     </form>
                  {% endif %}
 
-                <form class="form-horizontal" method="post" action="{% url "movies:add_tag_to_movie" movie.id %}">
+                <form class="form-inline form-actions" method="post" action="{% url "movies:add_tag_to_movie" movie.id %}">
                     {% csrf_token %}
-                    {% for field in tag_form.visible_fields %}
-                            {{ field.errors }}
-                            {{ field.help_text }}<br />
-                            {{ field }}
-                    {% endfor %}
+                    {{ tag_form|crispy }}
                     <input class="btn btn-small btn-info" type="submit" name="submit" value="AddTag"/>
                 </form>
 

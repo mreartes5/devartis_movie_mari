@@ -1,5 +1,5 @@
 {% extends 'movies/base.html' %}
-
+{% load crispy_forms_tags %}
 
 {% block title %}{{ Movies }}{% endblock %}
 
@@ -8,15 +8,10 @@
 
         <h2 style="color: cadetblue"> Search the best movies</h2>
 
-        <form class="form-inline" method="post" action="{% url "movies:search_movies" %}">
+        <form class="form-inline form-actions modal-form" method="post" action="{% url "movies:search_movies" %}">
             {% csrf_token %}
-            {% for field in search_form.visible_fields %}
-                <div class="control-group">
-                    {{ field.errors }}
-                    {{ field.help_text }}
-                    {{ field }} <br />
-                </div>
-            {% endfor %}
+            {{ search_form|crispy }}
+
             <input class="btn btn-primary" type="submit" name="submit" value="Search" />
         </form>
 
@@ -26,3 +21,4 @@
 
     </div>
 {% endblock %}
+

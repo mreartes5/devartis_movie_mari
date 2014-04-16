@@ -17,12 +17,12 @@ class Movie(models.Model):
     year = models.CharField(max_length=50)
     imdb_rank = models.FloatField(default=0)
     imdb_votes = models.IntegerField(default=0)
-    rating = models.FloatField(default=0)
+    current_rating = models.FloatField(default=0)
     total_votes = models.IntegerField(default=0)
     tags = models.ManyToManyField(Tag)
 
     def average_rating(self, value):
-        self.rating = (self.rating + float(value)) / 2
+        self.current_rating = (self.current_rating + float(value)) / 2
 
     def new_vote(self):
         self.total_votes += 1
@@ -40,7 +40,9 @@ class MyUser(AbstractUser):
 
 
 class Rating(models.Model):
+    value = models.IntegerField()
     user = models.ForeignKey(MyUser)
+    movie = models.ForeignKey(Movie)
 
 
 class UserProfile(models.Model):

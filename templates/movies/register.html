@@ -1,5 +1,7 @@
 {% extends 'movies/base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
+
 
 {% block title %}{{ Movies }}{% endblock %}
 
@@ -14,24 +16,15 @@
             Movies Mari says: <strong>Thank you for registering!</strong>
             <p><a href="{% url "movies:login" %}">Login</a> when you are ready to Movies Mari.</p>
         {% else %}
-            <form class="form-signin span8" id="user_form" method="post" action="{% url "movies:register" %}"
+            <form class="form-inline modal-form" id="user_form" method="post" action="{% url "movies:register" %}"
                   enctype="multipart/form-data">
                 {% csrf_token %}
                 <h3 class="form-signin-heading">Sign up Here</h3>
 
-                {% for field in user_form.visible_fields %}
-                    {{ field.errors }}
-                    {{ field.help_text }}<br />
-                    {{ field }}<br />
-                {% endfor %}
+                {{ user_form|crispy }}
 
-                {% for field in profile_form.visible_fields %}
-                    {{ field.errors }}
-                    {{ field.help_text }}<br />
-                    {{ field }}<br />
-                {% endfor %}
+                {{ profile_form|crispy }}
 
-                <br />
                 <!-- Provide a button to click to submit the form. -->
                 <input class="btn btn-primary" type="submit" name="submit" value="Register"/>
 

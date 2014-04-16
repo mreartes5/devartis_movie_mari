@@ -3,9 +3,9 @@ from movies.models import UserProfile, MyUser
 
 
 class UserForm(forms.ModelForm):
-    username = forms.CharField(help_text="Please enter a username.")
-    email = forms.CharField(help_text="Please enter your email.")
-    password = forms.CharField(widget=forms.PasswordInput(), help_text="Please enter a password.")
+    username = forms.CharField()
+    email = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput())
 
     class Meta:
         model = MyUser
@@ -13,8 +13,8 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    website = forms.URLField(help_text="Please enter your website.", required=False)
-    picture = forms.ImageField(help_text="Select a profile image to upload.", required=False)
+    website = forms.URLField(required=False)
+    picture = forms.ImageField(required=False)
 
     class Meta:
         model = UserProfile
@@ -30,6 +30,6 @@ class TagForm(forms.Form):
 
 
 class SearchForm(forms.Form):
-    title = forms.CharField(min_length=3, help_text="Enter the movie's title")
-    year_from = forms.IntegerField(min_value=0, help_text="Enter year from", required=False)
-    year_to = forms.IntegerField(min_value=0, help_text="Enter year to", required=False)
+    title = forms.CharField(min_length=3)
+    year_from = forms.IntegerField(min_value=0, required=False)
+    year_to = forms.IntegerField(min_value=0, required=False)
