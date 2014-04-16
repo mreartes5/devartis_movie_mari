@@ -1,0 +1,15 @@
+{% load crispy_forms_tags %}
+
+{% if movie in user_watchlist %}
+    <form class="form-inline" method="post" action="{% url "movies:remove_movie_from_movie" movie.id %}">
+        {% csrf_token %}
+        <label class="control-label" for="input">Remove from list:</label>
+        <input class="btn btn-small btn-info" type="submit" value="Remove"/>
+    </form>
+{% else %}
+    <form class="form-inline" method="post" action="{% url "movies:add_movie_to_list" movie.id %}">
+        {% csrf_token %}
+        <label class="control-label" for="input">Add to list:</label>
+        <input class="btn btn-small btn-info" type="submit" value="Add"/>
+    </form>
+{% endif %}

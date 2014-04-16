@@ -15,42 +15,11 @@
             <h4> Rating: {{ movie.current_rating }} / Votes: {{ movie.total_votes }}</h4>
             {% if user.is_authenticated %}
 
-                {% if not current_movie_voted %}
-                    <form class="form-actions" method="post" action="{% url "movies:add_or_change_rating_to_movie" movie.id %}">
-                        {% csrf_token %}
-                        {{ rating_form|crispy }}
-                        <input class="btn btn-small btn-info" type="submit" name="submit" value="Rank"/>
-                    </form>
-                {% else %}
-                     <form class="form-inline form-actions" method="post" action="{% url "movies:add_or_change_rating_to_movie" movie.id %}">
-                        {% csrf_token %}
-                        {{ rating_form|crispy }}
-                        <input class="btn btn-small btn-info" type="submit" value="Change Rank"/>
-                        <h6>Your last rating: {{ user_rating_for_movie }}</h6>
-                    </form>
+                {% include "movies/movies_rating.html" %}
 
-                {% endif %}
+                {% include "movies/movies_watchlist.html" %}
 
-                {% if movie in user_watchlist %}
-                    <form class="form-inline" method="post" action="{% url "movies:remove_movie_from_movie" movie.id %}">
-                        {% csrf_token %}
-                        <label class="control-label" for="input">Remove from list:</label>
-                        <input class="btn btn-small btn-info" type="submit" value="Remove"/>
-                    </form>
-                {% else %}
-                    <form class="form-inline" method="post" action="{% url "movies:add_movie_to_list" movie.id %}">
-                        {% csrf_token %}
-                        <label class="control-label" for="input">Add to list:</label>
-                        <input class="btn btn-small btn-info" type="submit" value="Add"/>
-                    </form>
-                 {% endif %}
-
-                <form class="form-inline form-actions" method="post" action="{% url "movies:add_tag_to_movie" movie.id %}">
-                    {% csrf_token %}
-                    {{ tag_form|crispy }}
-                    <input class="btn btn-small btn-info" type="submit" name="submit" value="AddTag"/>
-                </form>
-
+                {% include "movies/movies_tag.html" %}
 
                 <div class="control-group">
                     <a href="{% url "movies:tags_movie_show" movie.id %}">Tags</a>

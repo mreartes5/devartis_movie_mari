@@ -1,0 +1,18 @@
+{% load crispy_forms_tags %}
+
+{% if not current_movie_voted %}
+    <form class="form-actions" method="post" action="{% url "movies:add_or_change_rating_to_movie" movie.id %}">
+        {% csrf_token %}
+        {{ rating_form|crispy }}
+        <input class="btn btn-small btn-info" type="submit" name="submit" value="Rank"/>
+    </form>
+{% else %}
+    <form class="form-inline form-actions" method="post"
+          action="{% url "movies:add_or_change_rating_to_movie" movie.id %}">
+        {% csrf_token %}
+        {{ rating_form|crispy }}
+        <input class="btn btn-small btn-info" type="submit" value="Change Rank"/>
+        <h6>Your last rating: {{ user_rating_for_movie }}</h6>
+    </form>
+
+{% endif %}
