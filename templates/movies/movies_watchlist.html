@@ -1,5 +1,3 @@
-{% load crispy_forms_tags %}
-
 {% if movie in user_watchlist %}
     <form class="form-inline" method="post" action="{% url "movies:remove_movie_from_movie" movie.id %}">
         {% csrf_token %}

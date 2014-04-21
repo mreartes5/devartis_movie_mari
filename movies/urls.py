@@ -5,9 +5,9 @@ from movies import views
 
 urlpatterns = patterns('',
                        url(r'^$', views.index, name='index'),
-                       url(r'^register/$', views.register, name='register'),
-                       url(r'^login/$', views.user_login, name='login'),
-                       url(r'^logout/$', views.user_logout, name='logout'),
+                       # url(r'^register/$', views.register, name='register'),
+                       # url(r'^login/$', views.user_login, name='login'),
+                       # url(r'^logout/$', views.user_logout, name='logout'),
                        url(r'^movie/(?P<movie_id>\d+)/$', views.movie_show, name='movie_show'),
                        url(r'^movie/(?P<movie_id>\d+)/addRating/$', views.add_or_change_rating_to_movie,
                            name='add_or_change_rating_to_movie'),

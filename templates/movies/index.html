@@ -16,7 +16,7 @@
         </form>
 
         {% for movie in matched_movies %}
-            <li><a href="{% url "movies:movie_show" movie.id %}">{{ movie.title }}  ({{ movie.year }})</a></li>
+            <li>{% include "movies/movie_link.html" %}</li>
         {% endfor %}
 
     </div>

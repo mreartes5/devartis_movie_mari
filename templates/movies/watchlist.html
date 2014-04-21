@@ -11,7 +11,7 @@
             {% for movie in watchlist %}
                 <form class="form-inline" method="post" action="{% url "movies:remove_movie_from_list" movie.id %}">
                     {% csrf_token %}
-                    <label class="control-label" for="input"><a href="{% url "movies:movie_show" movie.id %}">{{ movie.title }} ({{ movie.year }})</a></label>
+                    <label class="control-label" for="input">{% include "movies/movie_link.html" %}</label>
                     <input class="btn btn-mini btn-primary" type="submit" value="Remove"/>
                 </form>
             {% endfor %}
@@ -21,3 +21,5 @@
         </div>
 
 {% endblock %}
+
+<li><a href="{% url "movies:movie_show" movie.id %}">{{ movie.title }}  ({{ movie.year }})</a></li>

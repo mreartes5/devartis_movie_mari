@@ -8,7 +8,7 @@
 {% block body_block %}
         <div style="margin-top:50px;margin-left:20px">
 
-            <h4><a href="{% url "movies:movie_show" movie.id %}">{{ movie.title }}  ({{ movie.year }})</a> Tags</h4>
+            <h4>{% include "movies/movie_link.html" %} Tags</h4>
             {% for tag in tags %}
                 <form class="form-horizontal" method="post" action="{% url "movies:remove_tag_from_movie" movie.id tag.id %}">
                     {% csrf_token %}

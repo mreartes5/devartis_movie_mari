@@ -1,5 +1,7 @@
 from django import forms
-from movies.models import UserProfile, MyUser
+from registration.models import User
+from movies.models import UserProfile
+# from movies.models import MyUser
 
 
 class UserForm(forms.ModelForm):
@@ -8,7 +10,7 @@ class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
 
     class Meta:
-        model = MyUser
+        model = User
         fields = ['username', 'email', 'password']
 
 

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 {% load static %}
+{% load i18n %}
 
 <html>
     <head>
@@ -11,7 +12,7 @@
 
     <body>
         <div>
-            {% block body_block %}PELICULAS{% endblock %}
+            {% block body_block %}Movies{% endblock %}
         </div>
 
         <hr />
@@ -27,14 +28,15 @@
 
                     <div class="nav-collapse collapse">
                            <ul class="nav pull-right">
-                               {% if user.is_authenticated %}
-                                <li class="navbar-text">Welcome, {{ user.username }}!</li>
-                                <li><a href="{% url "movies:logout" %}">Logout</a></li>
-                                <li><a href="{% url "movies:user_watchlist" %}"> My watchlist</a></li>
-                               {% else %}
-                                <li><a href="{% url "movies:register" %}">Register</a></li>
-                                <li><a href="{% url "movies:login" %}">Login</a></li>
-                               {% endif %}
+                                {% if user.is_authenticated %}
+                                    <li class="navbar-text">Welcome, {{ user.username }}!</li>
+                                    (<a href="{% url 'auth_logout' %}">{% trans "Log out" %}</a> |
+                                    <a href="{% url 'auth_password_change' %}">{% trans "Change password" %}</a>)
+                                    <li><a href="{% url "movies:user_watchlist" %}"> My watchlist</a></li>
+                                {% else %}
+                                    <li><a href="{% url 'auth_login' %}">{% trans "Log in" %}</a></li>
+                                {% endif %}
+                                <hr />
                            </ul>
                     </div>
                </div>
@@ -42,3 +44,5 @@
         </div>
     </body>
 </html>
+
+

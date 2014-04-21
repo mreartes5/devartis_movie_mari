@@ -10,9 +10,21 @@ TEMPLATE_PATH = os.path.join(PROJECT_PATH, 'templates')
 
 DATABASE_PATH = os.path.join(PROJECT_PATH, 'movies.db')
 
-AUTH_USER_MODEL = 'movies.MyUser'
+# AUTH_USER_MODEL = 'movies.MyUser'
 
 CRISPY_TEMPLATE_PACK = 'uni_form'
+
+ACCOUNT_ACTIVATION_DAYS = 7
+EMAIL_HOST = 'localhost'
+DEFAULT_FROM_EMAIL = 'webmaster@localhost'
+LOGIN_REDIRECT_URL = '/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_PORT = 8000
+EMAIL_HOST_USER = 'username'
+EMAIL_HOST_PASSWORD = 'password'
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -34,7 +46,12 @@ DATABASES = {
         #~ 'PORT': '',                      # Set to empty string for default.
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': DATABASE_PATH,
+    },
+
+    'OPTIONS': {
+        'timeout': 20,
     }
+
 }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -150,6 +167,7 @@ INSTALLED_APPS = (
     'movies',
     'floppyforms',
     'crispy_forms',
+    'registration',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
