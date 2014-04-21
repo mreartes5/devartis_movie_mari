@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+{% load static %}
+{% load i18n %}
+
+<html>
+    <head>
+        <link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
+        <link href="{% static "css/app.css" %}" rel="stylesheet" media="screen">
+        <title>Movies Mari - {% block title %}The latest movies{% endblock %}</title>
+    </head>
+
+    <body>
+        <div>
+            {% block body_block %}PELICULAS{% endblock %}
+        </div>
+
+        <hr />
+        <div class="navbar navbar-inverse navbar-fixed-top">
+           <div class="navbar-inner">
+               <div class="container">
+                   <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                       <span class="icon-bar"></span>
+                       <span class="icon-bar"></span>
+                       <span class="icon-bar"></span>
+                   </button>
+                   <a class="brand" href="{% url "movies:index" %}">Movies Mari</a>
+
+                    <div class="nav-collapse collapse">
+                           <ul class="nav pull-right">
+                                {% if user.is_authenticated %}
+                                    {% trans "Logged in" %}: {{ user.username }}
+                                    (<a href="{% url 'auth_logout' %}">{% trans "Log out" %}</a> |
+                                    <a href="{% url 'auth_password_change' %}">{% trans "Change password" %}</a>)
+                                {% else %}
+                                    <a href="{% url 'auth_login' %}">{% trans "Log in" %}</a>
+                                {% endif %}
+                                <hr />
+                           </ul>
+                    </div>
+               </div>
+           </div>
+        </div>
+    </body>
+</html>
+
+
