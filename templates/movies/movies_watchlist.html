@@ -1,13 +1,20 @@
-{% if movie in user_watchlist %}
-    <form class="form-inline" method="post" action="{% url "movies:remove_movie_from_movie" movie.id %}">
-        {% csrf_token %}
-        <label class="control-label" for="input">Remove from list:</label>
-        <input class="btn btn-small btn-info" type="submit" value="Remove"/>
-    </form>
-{% else %}
-    <form class="form-inline" method="post" action="{% url "movies:add_movie_to_list" movie.id %}">
-        {% csrf_token %}
-        <label class="control-label" for="input">Add to list:</label>
-        <input class="btn btn-small btn-info" type="submit" value="Add"/>
-    </form>
-{% endif %}
+<div class="span4 offset1">
+    <div class="caption">
+        <h3>Add it!</h3>
+    </div>
+    {% if movie in user_watchlist %}
+        <form class="form-inline form-actions" method="post"
+              action="{% url "movies:remove_movie_from_movie" movie.id %}">
+            {% csrf_token %}
+            <label class="control-label" for="input">Remove from list:</label>
+            <input class="btn btn-small btn-info" type="submit" value="Remove"/>
+        </form>
+    {% else %}
+        <form class="form-inline form-actions" method="post" action="{% url "movies:add_movie_to_list" movie.id %}">
+            {% csrf_token %}
+            <label class="control-label" for="input">Add to list:</label>
+            <input class="btn btn-small btn-info" type="submit" value="Add"/>
+        </form>
+    {% endif %}
+</div>
+

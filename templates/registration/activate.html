@@ -1,8 +1,11 @@
-{% extends "base.html" %}
+{% extends 'movies/base.html' %}
 {% load i18n %}
 
-{% block content %}
+{% block body_block %}
+    <div style="margin-top:80px;margin-left:20px">
 
-<p>{% trans "Account activation failed" %}</p>
+        <p>{% trans "Account activation failed" %}</p>
+        <a href="{% url "movies:index" %}">Home</a>
 
+    </div>
 {% endblock %}

@@ -1,26 +1,4 @@
 from django import forms
-from registration.models import User
-from movies.models import UserProfile
-# from movies.models import MyUser
-
-
-class UserForm(forms.ModelForm):
-    username = forms.CharField()
-    email = forms.CharField()
-    password = forms.CharField(widget=forms.PasswordInput())
-
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password']
-
-
-class UserProfileForm(forms.ModelForm):
-    website = forms.URLField(required=False)
-    picture = forms.ImageField(required=False)
-
-    class Meta:
-        model = UserProfile
-        fields = ['website', 'picture']
 
 
 class RatingForm(forms.Form):

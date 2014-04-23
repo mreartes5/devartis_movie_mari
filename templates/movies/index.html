@@ -1,24 +1,28 @@
 {% extends 'movies/base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}{{ Movies }}{% endblock %}
-
 {% block body_block %}
     <div style="margin-top:50px;margin-left:20px">
 
-        <h2 style="color: cadetblue"> Search the best movies</h2>
+        <div class="container">
+            <div class="page-header">
+                <h2 style="color: cadetblue"> Search the best movies</h2>
+            </div>
 
-        <form class="form-inline form-actions modal-form" method="post" action="{% url "movies:search_movies" %}">
-            {% csrf_token %}
-            {{ search_form|crispy }}
+            <form class="form-inline form-actions navbar-form" method="post" action="{% url "movies:search_movies" %}">
+                {% csrf_token %}
+                {{ search_form|crispy }}
 
-            <input class="btn btn-primary" type="submit" name="submit" value="Search" />
-        </form>
+                <div class="span4 offset1">
+                    <input class="btn btn-primary"  type="submit" name="submit" value="Search"/>
+                </div>
+            </form>
+            {% for movie in matched_movies %}
+                <li>{% include "movies/movie_link.html" %}</li>
+            {% endfor %}
 
-        {% for movie in matched_movies %}
-            <li>{% include "movies/movie_link.html" %}</li>
-        {% endfor %}
-
+        </div>
     </div>
+
 {% endblock %}
 

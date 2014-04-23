@@ -1,9 +1,9 @@
 {% extends 'movies/base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 
-{% block title %}{{ Movie }}{% endblock %}
-
+{% block title %}{{ movie.title }}{% endblock %}
 
 {% block body_block %}
     <div style="margin-top:50px;margin-left:20px">
@@ -11,15 +11,23 @@
         {% if not movie in movies %}
             <strong>{{ error }}</strong></br>
         {% else %}
-            <h2>{{ movie.title }} ({{ movie.year }})</h2>
-            <h4> Rating: {{ movie.current_rating }} / Votes: {{ movie.total_votes }}</h4>
+            <div class="page-header">
+                <h2 style="color: steelblue">{{ movie.title }}
+                    <small>({{ movie.year }})</small>
+                </h2>
+
+                <h6> Rating: {{ movie.current_rating }} <span
+                        class="label label-default">Votes: {{ movie.total_votes }}</span></h6>
+            </div>
             {% if user.is_authenticated %}
 
-                {% include "movies/movies_rating.html" %}
+                <div class="row">
 
-                {% include "movies/movies_watchlist.html" %}
+                    {% include "movies/movies_rating.html" %}
+                    {% include "movies/movies_watchlist.html" %}
+                    {% include "movies/movies_tag.html" %}
 
-                {% include "movies/movies_tag.html" %}
+                </div>
 
                 <div class="control-group">
                     <a href="{% url "movies:tags_movie_show" movie.id %}">Tags</a>

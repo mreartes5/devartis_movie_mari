@@ -1,17 +1,27 @@
-{% extends "base.html" %}
+{% extends 'movies/base.html' %}
 {% load i18n %}
+{% load crispy_forms_tags %}
+
 
 {% block body_block %}
     <div style="margin-top:80px;margin-left:20px">
-        <form method="post" action=".">
-          {% csrf_token %}
-          {{ form.as_p }}
+        <div class="page-header">
+            <h2 style="color: steelblue">Sing in</h2>
+        </div>
+        <div class="container">
 
-          <input type="submit" value="{% trans 'Log in' %}" />
-          <input type="hidden" name="next" value="{{ next }}" />
-        </form>
+            <form class="form-inline form-actions navbar-form navbar-left" method="post" action=".">
+                {% csrf_token %}
+                {{ form|crispy }}
 
-        <p>{% trans "Forgot password" %}? <a href="{% url 'auth_password_reset' %}">{% trans "Reset it" %}</a>!</p>
-        <p>{% trans "Not member" %}? <a href="{% url 'registration_register' %}">{% trans "Register" %}</a>!</p>
+                <input type="submit" class="btn btn-primary" value="{% trans 'Log in' %}"/>
+                <input type="hidden" name="next" value="{{ next }}"/>
+            </form>
+
+            <p>{% trans "Forgot password" %}? <a href="{% url 'auth_password_reset' %}">{% trans "Reset it" %}</a>!</p>
+
+            <p>{% trans "Not member" %}? <a href="{% url 'registration_register' %}">{% trans "Register" %}</a>!</p>
+            <a href="{% url "movies:index" %}">Home</a>
+        </div>
     </div>
 {% endblock %}

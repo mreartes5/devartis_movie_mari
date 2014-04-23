@@ -168,6 +168,7 @@ INSTALLED_APPS = (
     'floppyforms',
     'crispy_forms',
     'registration',
+    'django_extensions',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'

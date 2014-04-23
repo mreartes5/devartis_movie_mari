@@ -1,7 +1,13 @@
 {% load crispy_forms_tags %}
 
-<form class="form-inline form-actions" method="post" action="{% url "movies:add_tag_to_movie" movie.id %}">
-    {% csrf_token %}
-    {{ tag_form|crispy }}
-    <input class="btn btn-small btn-info" type="submit" name="submit" value="AddTag"/>
-</form>
+<div class="span4 offset1">
+    <div class="caption">
+        <h3>Tag it!</h3>
+    </div>
+    <form class="form-inline form-actions" method="post" action="{% url "movies:add_tag_to_movie" movie.id %}">
+        {% csrf_token %}
+        {{ tag_form|crispy }}
+        <input class="btn btn-small btn-info" type="submit" name="submit" value="AddTag"/>
+    </form>
+</div>
+

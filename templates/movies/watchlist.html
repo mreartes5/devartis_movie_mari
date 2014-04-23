@@ -2,24 +2,28 @@
 {% load static %}
 
 
-{% block title %}{{ watchlist }}{% endblock %}
-
+{% block title %} the best movies for you {% endblock title %}
 
 {% block body_block %}
-        <div style="margin-top:50px;margin-left:20px">
+    <div style="margin-top:50px;margin-left:20px">
 
-            {% for movie in watchlist %}
-                <form class="form-inline" method="post" action="{% url "movies:remove_movie_from_list" movie.id %}">
-                    {% csrf_token %}
-                    <label class="control-label" for="input">{% include "movies/movie_link.html" %}</label>
-                    <input class="btn btn-mini btn-primary" type="submit" value="Remove"/>
-                </form>
-            {% endfor %}
 
-            <a href="{% url "movies:index" %}">Home</a>
-
+        <div class="page-header">
+            <h2 style="color: steelblue"> My watchlist </h2>
         </div>
+
+        {% for movie in watchlist %}
+            <form class="form-inline" method="post" action="{% url "movies:remove_movie_from_list" movie.id %}">
+                {% csrf_token %}
+                <label class="control-label" for="input">{% include "movies/movie_link.html" %}</label>
+                <input class="btn btn-mini btn-primary" type="submit" value="Remove"/>
+            </form>
+        {% endfor %}
+
+        <a href="{% url "movies:index" %}">Home</a>
+
+    </div>
 
 {% endblock %}
 
-<li><a href="{% url "movies:movie_show" movie.id %}">{{ movie.title }}  ({{ movie.year }})</a></li>
+<li><a href="{% url "movies:movie_show" movie.id %}">{{ movie.title }} ({{ movie.year }})</a></li>

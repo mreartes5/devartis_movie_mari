@@ -7,7 +7,7 @@
     <head>
         <link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
         <link href="{% static "css/app.css" %}" rel="stylesheet" media="screen">
-        <title>Movies Mari - {% block title %}The latest movies{% endblock %}</title>
+        <title>Movies Mari - {% block title %} the best movies for you {% endblock title %}</title>
     </head>
 
     <body>
@@ -30,8 +30,8 @@
                            <ul class="nav pull-right">
                                 {% if user.is_authenticated %}
                                     <li class="navbar-text">Welcome, {{ user.username }}!</li>
-                                    (<a href="{% url 'auth_logout' %}">{% trans "Log out" %}</a> |
-                                    <a href="{% url 'auth_password_change' %}">{% trans "Change password" %}</a>)
+                                    <li><a href="{% url 'auth_logout' %}">{% trans "Log out" %}</a> </li>
+                                    <li><a href="{% url 'auth_password_change' %}">{% trans "Change password" %}</a></li>
                                     <li><a href="{% url "movies:user_watchlist" %}"> My watchlist</a></li>
                                 {% else %}
                                     <li><a href="{% url 'auth_login' %}">{% trans "Log in" %}</a></li>
@@ -42,6 +42,7 @@
                </div>
            </div>
         </div>
+        <script src="jquery-1.11.0.min.js"></script>
     </body>
 </html>
 

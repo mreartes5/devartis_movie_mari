@@ -1,10 +1,8 @@
 #! coding: utf-8
-from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import AbstractUser, User
+from registration.models import User
 
 
-# Create your models here.
 class Tag(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
@@ -35,10 +33,6 @@ class Movie(models.Model):
             votes=self.imdb_votes)
 
 
-# class MyUser(AbstractUser):
-#     watchlist = models.ManyToManyField(Movie)
-
-
 class Rating(models.Model):
     value = models.IntegerField()
     user = models.ForeignKey(User)
@@ -46,11 +40,5 @@ class Rating(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User)#settings.AUTH_USER_MODEL)
+    user = models.OneToOneField(User)  #(settings.AUTH_USER_MODEL)
     watchlist = models.ManyToManyField(Movie)
-
-    # website = models.URLField(blank=True)
-    # picture = models.ImageField(upload_to='profile_images', blank=True)
-
-    def __unicode__(self):
-        return self.user.usernamdele
