@@ -5,19 +5,16 @@
     <div class="caption">
         <h3>Rate it!</h3>
     </div>
-    {% if not current_movie_voted %}
-        <form class="form-actions" method="post" action="{% url "movies:add_or_change_rating_to_movie" movie.id %}">
-            {% csrf_token %}
+
+        <form id="rating-form" class="form-actions">
+
             {{ rating_form|crispy }}
-            <input class="btn btn-small btn-info" type="submit" name="submit" value="Rank"/>
+            {% if not current_movie_voted %}
+                <button id="rank" data-movie_id="{{movie.id}}" class="btn btn-small btn-info" type="button">Rank</button>
+                <h6 id="last_rating"></h6>
+            {% else %}
+                <button id="rank" data-movie_id="{{movie.id}}" class="btn btn-small btn-info" type="button">Change rank</button>
+                <h6 id="last_rating">Your last rating: {{ user_rating_for_movie }}</h6>
+            {% endif %}
         </form>
-    {% else %}
-        <form class="form-inline form-actions" method="post"
-              action="{% url "movies:add_or_change_rating_to_movie" movie.id %}">
-            {% csrf_token %}
-            {{ rating_form|crispy }}
-            <input class="btn btn-small btn-info" type="submit" value="Change Rank"/>
-            <h6>Your last rating: {{ user_rating_for_movie }}</h6>
-        </form>
-    {% endif %}
 </div>

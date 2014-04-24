@@ -1,5 +1,8 @@
+import json
+
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -81,9 +84,13 @@ def tags_movie_show(request, movie_id):
     return render(request, 'movies/movie_tags.html', context_dict)
 
 
-def update_current_rating_and_total_votes_for_current_movie(current_movie, new_value):
-    current_movie.average_rating(new_value)
-    current_movie.new_vote()
+def update_current_rating_and_total_votes_for_current_movie(current_movie, current_user, new_value):
+    if not current_user.rating_set.filter(movie=current_movie).exists():
+        current_movie.new_vote()
+        current_movie.average_rating(new_value)
+    elif current_user.rating_set.get(movie=current_movie).value != new_value:
+        current_movie.average_rating(new_value)
+
     current_movie.save()
 
 
@@ -105,20 +112,29 @@ def add_or_change_rating_to_movie(request, movie_id):
     rating_form = RatingForm(data=request.POST)
     current_movie = get_object_or_404(Movie, pk=movie_id)
     current_user = request.user
-    context_dict = {'movie': current_movie, 'movies': Movie.objects.all(), 'tag_form': TagForm(), 'user': current_user}
+
+    data = {}
 
     if rating_form.is_valid():
         new_value = rating_form.cleaned_data['value']
-        update_current_rating_and_total_votes_for_current_movie(current_movie, new_value)
+        update_current_rating_and_total_votes_for_current_movie(current_movie, current_user, new_value)
         change_or_create_user_rating_for_current_movie(current_movie, current_user, new_value)
 
-        context_dict['rating_form'] = RatingForm()
-        return redirect('movies:movie_show', movie_id=movie_id)
+        data['votes_count'] = current_movie.total_votes
+        data['new_rating'] = current_movie.current_rating
 
     else:
-        context_dict['rating_form'] = rating_form
+        data['error'] = "error on validation"
 
-    return render(request, 'movies/movie.html', context_dict)
+    if current_user.rating_set.filter(movie=current_movie).exists():
+        current_movie_voted = True
+        data['user_rating_for_movie'] = current_user.rating_set.get(movie=current_movie).value
+    else:
+        current_movie_voted = False
+
+    data['current_movie_voted'] = current_movie_voted
+
+    return HttpResponse(json.dumps(data), content_type="application/json")
 
 
 def get_or_create_tag(tag_name):

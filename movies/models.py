@@ -40,5 +40,5 @@ class Rating(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User)  #(settings.AUTH_USER_MODEL)
+    user = models.OneToOneField(User)
     watchlist = models.ManyToManyField(Movie)

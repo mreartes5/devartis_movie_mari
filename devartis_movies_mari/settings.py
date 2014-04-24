@@ -10,8 +10,6 @@ TEMPLATE_PATH = os.path.join(PROJECT_PATH, 'templates')
 
 DATABASE_PATH = os.path.join(PROJECT_PATH, 'movies.db')
 
-# AUTH_USER_MODEL = 'movies.MyUser'
-
 CRISPY_TEMPLATE_PACK = 'uni_form'
 
 ACCOUNT_ACTIVATION_DAYS = 7
