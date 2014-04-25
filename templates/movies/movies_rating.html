@@ -6,15 +6,16 @@
         <h3>Rate it!</h3>
     </div>
 
-        <form id="rating-form" class="form-actions">
+    <form id="rating-form" class="form-actions">
 
-            {{ rating_form|crispy }}
-            {% if not current_movie_voted %}
-                <button id="rank" data-movie_id="{{movie.id}}" class="btn btn-small btn-info" type="button">Rank</button>
-                <h6 id="last_rating"></h6>
-            {% else %}
-                <button id="rank" data-movie_id="{{movie.id}}" class="btn btn-small btn-info" type="button">Change rank</button>
-                <h6 id="last_rating">Your last rating: {{ user_rating_for_movie }}</h6>
-            {% endif %}
-        </form>
+        {{ rating_form|crispy }}
+        {% if not current_movie_voted %}
+            <button id="rank" data-movie_id="{{ movie.id }}" class="btn btn-small btn-info" type="button">Rank</button>
+            <h6 id="last_rating"></h6>
+        {% else %}
+            <button id="rank" data-movie_id="{{ movie.id }}" class="btn btn-small btn-info" type="button">Change rank
+            </button>
+            <h6 id="last_rating">Your last rating: {{ user_rating_for_movie }}</h6>
+        {% endif %}
+    </form>
 </div>

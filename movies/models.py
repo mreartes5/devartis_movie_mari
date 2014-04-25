@@ -1,5 +1,6 @@
 #! coding: utf-8
 from django.db import models
+from django.db.models import Avg
 from registration.models import User
 
 
@@ -15,12 +16,12 @@ class Movie(models.Model):
     year = models.CharField(max_length=50)
     imdb_rank = models.FloatField(default=0)
     imdb_votes = models.IntegerField(default=0)
-    current_rating = models.FloatField(default=0)
     total_votes = models.IntegerField(default=0)
     tags = models.ManyToManyField(Tag)
 
-    def average_rating(self, value):
-        self.current_rating = (self.current_rating + float(value)) / 2
+    def average_rating(self):
+        average = Rating.objects.filter(movie=self).aggregate(Avg('value'))
+        return average['value__avg']
 
     def new_vote(self):
         self.total_votes += 1

@@ -84,12 +84,9 @@ def tags_movie_show(request, movie_id):
     return render(request, 'movies/movie_tags.html', context_dict)
 
 
-def update_current_rating_and_total_votes_for_current_movie(current_movie, current_user, new_value):
+def update_total_votes_for_current_movie(current_movie, current_user, new_value):
     if not current_user.rating_set.filter(movie=current_movie).exists():
         current_movie.new_vote()
-        current_movie.average_rating(new_value)
-    elif current_user.rating_set.get(movie=current_movie).value != new_value:
-        current_movie.average_rating(new_value)
 
     current_movie.save()
 
@@ -117,14 +114,14 @@ def add_or_change_rating_to_movie(request, movie_id):
 
     if rating_form.is_valid():
         new_value = rating_form.cleaned_data['value']
-        update_current_rating_and_total_votes_for_current_movie(current_movie, current_user, new_value)
+        update_total_votes_for_current_movie(current_movie, current_user, new_value)
         change_or_create_user_rating_for_current_movie(current_movie, current_user, new_value)
 
-        data['votes_count'] = current_movie.total_votes
-        data['new_rating'] = current_movie.current_rating
-
     else:
-        data['error'] = "error on validation"
+        data['error'] = "This number is invalid"
+
+    data['votes_count'] = current_movie.total_votes
+    data['new_rating'] = current_movie.average_rating()
 
     if current_user.rating_set.filter(movie=current_movie).exists():
         current_movie_voted = True

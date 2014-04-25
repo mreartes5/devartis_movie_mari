@@ -26,8 +26,6 @@ class Command(BaseCommand):
         new_or_updated_movie.title = title
         new_or_updated_movie.year = year
         new_or_updated_movie.imdb_votes = int(movie_line_parts[1])
-        new_or_updated_movie.current_rating = new_or_updated_movie.imdb_rank
-        new_or_updated_movie.total_votes = new_or_updated_movie.imdb_votes
         new_or_updated_movie.save()
 
         self.stdout.write(unicode(new_or_updated_movie))

@@ -13,11 +13,17 @@
         {% else %}
             <div class="page-header">
                 <h2 style="color: steelblue">{{ movie.title }}
-                    <small>({{ movie.year }})</small>
+                    <small>({{ movie.year }})<h6>IMDB Rating: {{ movie.imdb_rank }} <span class="label label-default">IMDB Votes: {{ movie.imdb_votes }}</span>
+                    </h6></small>
+
                 </h2>
 
-                <h6><div id="rating">Rating: {{ movie.current_rating }}</div>  <span id="votes"
-                        class="label label-default">Votes: {{ movie.total_votes }}</span></h6>
+                <h6>
+                    <div id="rating">Movies Rating: {{ movie.average_rating }}</div>  <span id="votes"
+                                                                                            class="label label-default">Movies Votes: {{ movie.total_votes }}</span>
+                </h6>
+
+
             </div>
             {% if user.is_authenticated %}
 
